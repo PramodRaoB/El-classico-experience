@@ -8,6 +8,7 @@
 
 int numGoals;
 int spectatingTime;
+sem_t *zoneSeats;
 
 int main() {
     int capacity[3];
@@ -24,7 +25,8 @@ int main() {
         for (int j = 0; j < currGroup->size; j++) {
             char zoneType;
             Spectator *currMember = &currGroup->members[j];
-            scanf("%s %c %d %d %d", currMember->name, &zoneType, &currMember->entryTime, &currMember->patienceTime, &currMember->goalLimit);
+            scanf("%s %c %d %d %d", currMember->name, &zoneType, &currMember->entryTime, &currMember->patienceTime,
+                  &currMember->goalLimit);
             int validInput = 0;
             while (!validInput) {
                 switch (zoneType) {
@@ -36,11 +38,15 @@ int main() {
                         currMember->type = HOME;
                         validInput = 1;
                         break;
+                    case 'N':
+                        currMember->type = NEUTRAL;
+                        validInput = 1;
+                        break;
                     default:
-                        fprintf(stderr, "Invalid team entered. Enter valid team (H/A): ");
+                        fprintf(stderr, "Invalid zone type entered. Enter the valid zone type: ");
                 }
+                currMember->groupID = i;
             }
-            currMember->groupID = i;
         }
     }
     scanf("%d", &numGoals);
@@ -49,6 +55,7 @@ int main() {
     for (int i = 0; i < numGoals; i++) {
         Goal *currGoal = &all_goals[i];
         char teamType;
+        scanf("%c", &teamType);
         scanf("%c %d %lf", &teamType, &currGoal->delta, &currGoal->chance);
         int validInput = 0;
         while (!validInput) {
@@ -61,17 +68,17 @@ int main() {
                     currGoal->team = HOME;
                     validInput = 1;
                     break;
-                case 'N':
-                    currGoal->team = NEUTRAL;
-                    validInput = 1;
-                    break;
                 default:
-                    fprintf(stderr, "Invalid zone type entered. Enter the valid zone type: ");
+                    fprintf(stderr, "Invalid team entered. Enter valid team (H/A): ");
             }
         }
         if (i != 0) currGoal->delta -= prefixTime;
         prefixTime += currGoal->delta;
     }
+    zoneSeats = (sem_t *) malloc(3 * sizeof(sem_t));
+    assert(zoneSeats);
+    for (int i = 0; i < 3; i++)
+        sem_init(&zoneSeats[i], 0, capacity[i]);
     scoreboard_init();
     fans_init();
 
@@ -84,4 +91,9 @@ int main() {
     assert(groupThreads);
     for (int i = 0; i < numGroups; i++)
         Pthread_create(&groupThreads[i], NULL, group_process, (Group *) &all_groups[i]);
+
+    for (int i = 0; i < numGroups; i++)
+        Pthread_join(groupThreads[i], NULL);
+    Pthread_join(goalThread, NULL);
+    return 0;
 }

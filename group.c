@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 #include "group.h"
 
 Group *all_groups = NULL;
@@ -28,4 +29,9 @@ void *group_process(void *input) {
     for (int i = 0; i < group->size; i++) {
         Pthread_create(&memberThreads[i], NULL, spectator_process, (void *) &group->members[i]);
     }
+    for (int i = 0; i < group->size; i++) {
+        Pthread_join(memberThreads[i], NULL);
+    }
+    printf("Group %d is leaving for dinner\n", group->id);
+    return NULL;
 }
