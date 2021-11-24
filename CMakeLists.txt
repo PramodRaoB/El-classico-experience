@@ -7,4 +7,4 @@ include_directories(.)
 
 add_executable(El_classico_experience
         main.c
-        globals.h spectator.c spectator.h group.c group.h goal.c goal.h)
+        globals.h spectator.c spectator.h group.c group.h goal.c goal.h wrapper.c wrapper.h)

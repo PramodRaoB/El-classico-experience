@@ -6,6 +6,7 @@
 typedef struct group {
     int size;
     Spectator *members;
+    int id;
 } Group;
 
 extern Group *all_groups;
