@@ -1,5 +1,3 @@
-#include <stdlib.h>
-#include <assert.h>
 #include <unistd.h>
 #include <stdio.h>
 #include "spectator.h"
