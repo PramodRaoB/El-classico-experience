@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include "group.h"
+#include "globals.h"
 
 Group *all_groups = NULL;
 
@@ -32,6 +33,6 @@ void *group_process(void *input) {
     for (int i = 0; i < group->size; i++) {
         Pthread_join(memberThreads[i], NULL);
     }
-    printf("Group %d is leaving for dinner\n", group->id);
+    printf(C_GROUP "Group %d is leaving for dinner\n" RESET, group->id);
     return NULL;
 }

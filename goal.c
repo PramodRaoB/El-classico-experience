@@ -35,10 +35,10 @@ void *goal_process(void *input) {
             else
                 Pthread_cond_broadcast(&homeFans);
             Pthread_mutex_unlock(&Scoreboard.scoreboardLock);
-            printf("Team %c have scored their %dth goal\n", (currGoal->team == HOME ? 'H': 'A'), Scoreboard.score[currGoal->team]);
+            printf(C_GOAL "Team %c have scored their %dth goal\n" RESET, (currGoal->team == HOME ? 'H': 'A'), Scoreboard.score[currGoal->team]);
         }
         else {
-            printf("Team %c missed the chance to score their %dth goal\n", (currGoal->team == HOME ? 'H': 'A'), Scoreboard.score[currGoal->team] + 1);
+            printf(C_GOAL "Team %c missed the chance to score their %dth goal\n" RESET, (currGoal->team == HOME ? 'H': 'A'), Scoreboard.score[currGoal->team] + 1);
         }
     }
     return NULL;

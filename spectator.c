@@ -19,7 +19,7 @@ void fans_init() {
 void *spectator_process(void *input) {
     Spectator *spectator = (Spectator *) input;
     sleep(spectator->entryTime);
-    printf("%s has reached the stadium\n", spectator->name);
+    printf(C_SPECTATOR "%s has reached the stadium\n" RESET, spectator->name);
     pthread_t seatAcquireThreads[3];
     if (spectator->type == HOME || spectator->type == NEUTRAL) {
         SeatGrab sg;
@@ -55,7 +55,7 @@ void *spectator_process(void *input) {
     pthread_cond_timedwait(&spectator->seatCV, &spectator->seatLock, &ts_);
     Pthread_mutex_unlock(&spectator->seatLock);
     if (spectator->seatType == -1) {
-        printf("%s couldn't get a seat\n", spectator->name);
+        printf(C_SPECTATOR2 "%s couldn't get a seat\n" RESET, spectator->name);
     }
     else {
         char c;
@@ -69,10 +69,10 @@ void *spectator_process(void *input) {
             default:
                 c = 'N';
         }
-        printf("%s has got a seat in zone %c\n", spectator->name, c);
+        printf(C_SPECTATOR "%s has got a seat in zone %c\n" RESET, spectator->name, c);
         if (spectator->type == NEUTRAL) {
             sleep(spectatingTime);
-            printf("%s watched the match for %d seconds and is leaving\n", spectator->name, spectatingTime);
+            printf(C_SPECTATOR2 "%s watched the match for %d seconds and is leaving\n" RESET, spectator->name, spectatingTime);
         } else {
             struct timespec ts;
             clock_gettime(CLOCK_REALTIME, &ts);
@@ -81,7 +81,7 @@ void *spectator_process(void *input) {
             while (!decidedToLeave) {
                 Pthread_mutex_lock(&Scoreboard.scoreboardLock);
                 if (Scoreboard.score[spectator->type ^ 1] >= spectator->goalLimit) {
-                    printf("%s is leaving due to the bad defensive performance of his team\n", spectator->name);
+                    printf(C_SPECTATOR2 "%s is leaving due to the bad defensive performance of his team\n" RESET, spectator->name);
                     decidedToLeave = 1;
                     Pthread_mutex_unlock(&Scoreboard.scoreboardLock);
                     continue;
@@ -93,9 +93,9 @@ void *spectator_process(void *input) {
                     rc = pthread_cond_timedwait(&awayFans, &Scoreboard.scoreboardLock, &ts);
                 if (rc != 0) {
                     decidedToLeave = 1;
-                    printf("%s watched the match for %d seconds and is leaving\n", spectator->name, spectatingTime);
+                    printf(C_SPECTATOR2 "%s watched the match for %d seconds and is leaving\n" RESET, spectator->name, spectatingTime);
                 } else if (Scoreboard.score[spectator->type ^ 1] >= spectator->goalLimit) {
-                    printf("%s is leaving due to the bad defensive performance of his team\n", spectator->name);
+                    printf(C_SPECTATOR2 "%s is leaving due to the bad defensive performance of his team\n" RESET, spectator->name);
                     decidedToLeave = 1;
                 }
                 Pthread_mutex_unlock(&Scoreboard.scoreboardLock);
@@ -103,7 +103,7 @@ void *spectator_process(void *input) {
         }
         sem_post(&zoneSeats[spectator->seatType]);
     }
-    printf("%s is waiting for their friends at the exit\n", spectator->name);
+    printf(C_SPECTATOR "%s is waiting for their friends at the exit\n" RESET, spectator->name);
     return NULL;
 }
 
