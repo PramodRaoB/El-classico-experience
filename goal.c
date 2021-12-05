@@ -26,7 +26,7 @@ void *goal_process(void *input) {
         Goal *currGoal = &all_goals[i];
         sleep(currGoal->delta);
         double prob = (double) rand() / RAND_MAX;
-        if (prob <= currGoal->chance) {
+        if (prob >= currGoal->chance) {
             Pthread_mutex_lock(&Scoreboard.scoreboardLock);
             Scoreboard.score[currGoal->team]++;
 

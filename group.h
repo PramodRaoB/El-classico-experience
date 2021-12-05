@@ -14,6 +14,4 @@ extern Group *all_groups;
 void group_init(int n);
 void group_fill(Spectator **members, int n);
 
-void *group_process(void *input);
-
 #endif //EL_CLASSICO_EXPERIENCE_GROUP_H
